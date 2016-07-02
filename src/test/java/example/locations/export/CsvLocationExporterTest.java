@@ -28,17 +28,27 @@ public class CsvLocationExporterTest {
 
     @After
     public void tearDown() throws Exception {
-        file.delete();
+        if (file != null) file.delete();
     }
 
     @Test
-    public void testExport_ok() throws Exception {
+    public void testExport() throws Exception {
         List<Location> locations = new ArrayList<>();
         locations.add(new Location(1L, "name", "type", 1.0, 2.0));
         locations.add(new Location(2L, "name2", "type2", 3.0, 4.0));
         locationExporter.export(locations, "locations");
         assertTrue(file.getName().startsWith("locations.csv"));
         assertEquals("1;name;type;1.0;2.0\n2;name2;type2;3.0;4.0\n", readFile(file));
+    }
+
+    @Test
+    public void testBuildFullFileName() throws Exception {
+        assertEquals("filename.ext", locationExporter.buildFullFileName("filename", "ext"));
+    }
+
+    @Test
+    public void testGetExtension() throws Exception {
+        assertEquals("csv", locationExporter.getExtension());
     }
 
     private String readFile(File file) throws Exception {
